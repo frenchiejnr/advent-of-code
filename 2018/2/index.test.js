@@ -18,3 +18,12 @@ describe('part 1', () => {
         expect(advent2018_2.testTriple('abcccd')).toBe(true);
     });
 });
+
+describe('part 2', () => {
+    test('should be fgij', () => {
+        input = [
+            "abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"
+        ]
+        expect(advent2018_2.commonCharacters(input)).toBe("fgij");
+    });
+});
