@@ -110,7 +110,6 @@ function runMachine(input) {
 
     while (currentPosition <= startingInput.length && answer === false) {
         [newInput, currentPosition] = continueThroughInput(newInput, currentPosition);
-        console.log(currentPosition);
     }
 
     return newInput;
