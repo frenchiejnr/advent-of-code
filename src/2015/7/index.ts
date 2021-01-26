@@ -41,7 +41,7 @@ In little Bobby's kit's instructions booklet (provided as your puzzle input), wh
 import * as fs from "fs";
 
 export type wires = { [key: string]: number };
-const wires: wires = {};
+let wires: wires = {};
 
 export function storeInVariable(value: number, wires: wires, wireName: string) {
   wires[wireName] = value;
@@ -63,13 +63,14 @@ export function bitwiseNot(wire: number) {
   return 65536 + ~wire;
 }
 
-let file = fs.readFileSync("src/2015/1/input.txt", "utf-8").split(/\r?\n/);
-runAllInstructions(file);
+let file1 = fs.readFileSync("src/2015/7/input.txt", "utf-8").split(/\r?\n/);
+runAllInstructions(file1);
 
 function runAllInstructions(file: string[]) {
   file.forEach((instruction) => {
     findStartingWires(instruction);
-  });
+  }
+  );
 
   while (file.length >= 2) {
     file.forEach((instruction) => {
@@ -90,85 +91,86 @@ function runAllInstructions(file: string[]) {
       }
     });
   }
-}
-
-function runRshiftInstruction(splitCommand: string[], instruction: string) {
-  let { wireName, outputWire, shift } = splitShiftInstruction(splitCommand);
-  if (wireName in wires) {
-    wires[outputWire] = rightShift(wires[wireName], shift);
-    removeFromArray(instruction);
+  function runRshiftInstruction(splitCommand: string[], instruction: string) {
+    let { wireName, outputWire, shift } = splitShiftInstruction(splitCommand);
+    if (wireName in wires) {
+      wires[outputWire] = rightShift(wires[wireName], shift);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function runLshiftInstruction(splitCommand: string[], instruction: string) {
+    let { wireName, outputWire, shift } = splitShiftInstruction(splitCommand);
+    if (wireName in wires) {
+      wires[outputWire] = leftShift(wires[wireName], shift);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function splitShiftInstruction(splitCommand: string[]) {
+    let wireName = splitCommand[0];
+    let shift = parseInt(splitCommand[2]);
+    let outputWire = splitCommand[4];
+    return { wireName, outputWire, shift };
+  }
+  
+  function runAndInstruction(splitCommand: string[], instruction: string) {
+    let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
+      splitCommand
+    );
+    if (wireName1 === "1") {
+      wireName1 = "_";
+      wires[wireName1] = 1;
+    }
+    if (wireName1 in wires && wireName2 in wires) {
+      wires[outputWire] = bitwiseAnd(wires[wireName1], wires[wireName2]);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function runOrInstruction(splitCommand: string[], instruction: string) {
+    let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
+      splitCommand
+    );
+    if (wireName1 in wires && wireName2 in wires) {
+      wires[outputWire] = bitwiseOr(wires[wireName1], wires[wireName2]);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function splitAndOrInstruction(splitCommand: string[]) {
+    let wireName1 = splitCommand[0];
+    let wireName2 = splitCommand[2];
+    let outputWire = splitCommand[4];
+    return { wireName1, wireName2, outputWire };
+  }
+  
+  function runNotInstruction(splitCommand: string[], instruction: string) {
+    let wireName = splitCommand[1];
+    let outputWire = splitCommand[3];
+    if (wireName in wires) {
+      wires[outputWire] = bitwiseNot(wires[wireName]);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function findStartingWires(instruction: string) {
+    if (
+      instruction.split(" ").length === 3 &&
+      isNaN(instruction.split(" ")[0] as any) === false
+    ) {
+      wires[instruction.split(" ")[2]] = parseInt(instruction.split(" ")[0]);
+      removeFromArray(instruction, file);
+    }
+  }
+  
+  function removeFromArray(instruction: string, file:string[]) {
+    let index = file.indexOf(instruction);
+    file.splice(index, 1);
   }
 }
 
-function runLshiftInstruction(splitCommand: string[], instruction: string) {
-  let { wireName, outputWire, shift } = splitShiftInstruction(splitCommand);
-  if (wireName in wires) {
-    wires[outputWire] = leftShift(wires[wireName], shift);
-    removeFromArray(instruction);
-  }
-}
 
-function splitShiftInstruction(splitCommand: string[]) {
-  let wireName = splitCommand[0];
-  let shift = parseInt(splitCommand[2]);
-  let outputWire = splitCommand[4];
-  return { wireName, outputWire, shift };
-}
-
-function runAndInstruction(splitCommand: string[], instruction: string) {
-  let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
-    splitCommand
-  );
-  if (wireName1 === "1") {
-    wireName1 = "_";
-    wires[wireName1] = 1;
-  }
-  if (wireName1 in wires && wireName2 in wires) {
-    wires[outputWire] = bitwiseAnd(wires[wireName1], wires[wireName2]);
-    removeFromArray(instruction);
-  }
-}
-
-function runOrInstruction(splitCommand: string[], instruction: string) {
-  let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
-    splitCommand
-  );
-  if (wireName1 in wires && wireName2 in wires) {
-    wires[outputWire] = bitwiseOr(wires[wireName1], wires[wireName2]);
-    removeFromArray(instruction);
-  }
-}
-
-function splitAndOrInstruction(splitCommand: string[]) {
-  let wireName1 = splitCommand[0];
-  let wireName2 = splitCommand[2];
-  let outputWire = splitCommand[4];
-  return { wireName1, wireName2, outputWire };
-}
-
-function runNotInstruction(splitCommand: string[], instruction: string) {
-  let wireName = splitCommand[1];
-  let outputWire = splitCommand[3];
-  if (wireName in wires) {
-    wires[outputWire] = bitwiseNot(wires[wireName]);
-    removeFromArray(instruction);
-  }
-}
-
-function findStartingWires(instruction: string) {
-  if (
-    instruction.split(" ").length === 3 &&
-    isNaN(instruction.split(" ")[0] as any) === false
-  ) {
-    wires[instruction.split(" ")[2]] = parseInt(instruction.split(" ")[0]);
-    removeFromArray(instruction);
-  }
-}
-
-function removeFromArray(instruction: string) {
-  let index = file.indexOf(instruction);
-  file.splice(index, 1);
-}
 
 let answer1 = wires["lx"];
 console.log(answer1);
