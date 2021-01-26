@@ -69,8 +69,7 @@ runAllInstructions(file1);
 function runAllInstructions(file: string[]) {
   file.forEach((instruction) => {
     findStartingWires(instruction);
-  }
-  );
+  });
 
   while (file.length >= 2) {
     file.forEach((instruction) => {
@@ -98,7 +97,7 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
+
   function runLshiftInstruction(splitCommand: string[], instruction: string) {
     let { wireName, outputWire, shift } = splitShiftInstruction(splitCommand);
     if (wireName in wires) {
@@ -106,14 +105,14 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
+
   function splitShiftInstruction(splitCommand: string[]) {
     let wireName = splitCommand[0];
     let shift = parseInt(splitCommand[2]);
     let outputWire = splitCommand[4];
     return { wireName, outputWire, shift };
   }
-  
+
   function runAndInstruction(splitCommand: string[], instruction: string) {
     let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
       splitCommand
@@ -127,7 +126,7 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
+
   function runOrInstruction(splitCommand: string[], instruction: string) {
     let { wireName1, wireName2, outputWire } = splitAndOrInstruction(
       splitCommand
@@ -137,14 +136,14 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
+
   function splitAndOrInstruction(splitCommand: string[]) {
     let wireName1 = splitCommand[0];
     let wireName2 = splitCommand[2];
     let outputWire = splitCommand[4];
     return { wireName1, wireName2, outputWire };
   }
-  
+
   function runNotInstruction(splitCommand: string[], instruction: string) {
     let wireName = splitCommand[1];
     let outputWire = splitCommand[3];
@@ -153,7 +152,7 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
+
   function findStartingWires(instruction: string) {
     if (
       instruction.split(" ").length === 3 &&
@@ -163,14 +162,23 @@ function runAllInstructions(file: string[]) {
       removeFromArray(instruction, file);
     }
   }
-  
-  function removeFromArray(instruction: string, file:string[]) {
+
+  function removeFromArray(instruction: string, file: string[]) {
     let index = file.indexOf(instruction);
     file.splice(index, 1);
   }
 }
 
-
-
 let answer1 = wires["lx"];
 console.log(answer1);
+
+let currentBValue = wires["b"];
+wires = {};
+
+let file2: string | string[] = fs.readFileSync("src/2015/7/input.txt", "utf-8");
+file2 = file2.replace(String(currentBValue), String(answer1)).split(/\r?\n/);
+
+runAllInstructions(file2);
+
+let answer2 = wires["lx"];
+console.log(answer2);
