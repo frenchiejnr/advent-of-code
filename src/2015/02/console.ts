@@ -1,3 +1,3 @@
-const {totalWrappingPaperNeeded} = require('./index');
+const { totalsNeeded } = require('./index');
 
-console.log(totalWrappingPaperNeeded('./input.txt'));
+console.log(totalsNeeded('./input.txt'));
