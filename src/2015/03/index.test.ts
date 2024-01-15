@@ -13,10 +13,10 @@ describe('part 1 tests', () => {
         expect(result3).toEqual(2);
     }),
         it("check visited should work", () => {
-            const result1 = checkVisited([0, 1], [[0, 0], [0, 2]], 2);
-            const result2 = checkVisited([0, 1], [[0, 0], [0, 1]], 2);
-            expect(result1).toEqual([3, [[0, 0], [0, 2], [0, 1]]])
-            expect(result2).toEqual([2, [[0, 0], [0, 1]]])
+            const result1 = checkVisited([0, 1], [[0, 0], [0, 2]]);
+            const result2 = checkVisited([0, 1], [[0, 0], [0, 1]]);
+            expect(result1).toEqual([[0, 0], [0, 2], [0, 1]])
+            expect(result2).toEqual([[0, 0], [0, 1]])
         })
 })
 
